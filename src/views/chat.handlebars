@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<body>
+    <h1>Chat</h1>
+    <div id="message-container">
+        <!-- Aquí se mostrarán los mensajes -->
+    </div>
+    <form id="message-form">
+        <input type="text" id="user" placeholder="Tu correo electrónico">
+        <input type="text" id="message" placeholder="Mensaje">
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Escuchar eventos de nuevos mensajes
+        socket.on('newMessage', (message) => {
+            const messageContainer = document.getElementById('message-container');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `${message.user}: ${message.message}`;
+            messageContainer.appendChild(messageElement);
+        });
+
+        // Manejar envío de mensaje
+        document.getElementById('message-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const user = document.getElementById('user').value;
+            const message = document.getElementById('message').value;
+
+            // Enviar mensaje al servidor
+            socket.emit('sendMessage', { user, message });
+
+            // Limpiar el formulario
+            document.getElementById('message').value = '';
+        });
+    </script>
+</body>
+</html>
